@@ -1,0 +1,36 @@
+<table>
+	<tr><th>QTY</th><th>PRICE PER {{ product.options[0] }}</th></tr>
+	{% for variant in product.variants %}
+		<tr><td>{{ variant.option1 }}</td><td>{{ variant.price | money }}</td></tr>
+	{% endfor %}
+</table>
+ 
+<form action="/cart/add" method="post">
+	<label>Quantity: </label>
+	<input type="text" id="quantity" name="quantity" onkeyup="quantityUpdate(this.value)" value="1" />
+	<input type="text" name="id" id="product-select" value="{{ product.variants[0].id }}" />
+	<button type="submit">Submit</button>
+</form>
+ 
+<script type="text/javascript">
+	function quantityUpdate(quantity){
+		var qty = parseInt(quantity);
+		var variant = new Array();
+		var qtyBreak = new Array();
+		var price = new Array();
+		{% for variant in product.variants %}
+			variant[{{ forloop.index | minus:1 }}] = "{{ variant.id }}";
+			qtyBreak[{{ forloop.index | minus:1 }}] = parseInt({{ variant.option1 }});
+			price[{{ forloop.index | minus:1 }}] = "{{ variant.price | money }}";
+		{% endfor %}
+		for(i=0; i<{{ product.variants.size }}; i++) {
+			if(qty >= qtyBreak[i]) {
+				document.getElementById("product-select").value = variant[i];
+				document.getElementById("price").innerHTML = price[i];
+			}
+		}
+	}
+</script>
+
+change the first product option title to "Rate"
+enter variants/rates in increasing value
